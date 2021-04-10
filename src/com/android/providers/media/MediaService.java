@@ -19,6 +19,7 @@ package com.android.providers.media;
 import static android.media.RingtoneManager.TYPE_ALARM;
 import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static android.media.RingtoneManager.TYPE_RINGTONE;
+import static android.media.RingtoneManager.TYPE_RINGTONE1;
 
 import static com.android.providers.media.MediaProvider.TAG;
 
@@ -47,6 +48,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import com.unisoc.providers.media.MediaServiceAssist;
 
 public class MediaService extends IntentService {
     public MediaService() {
@@ -70,6 +72,7 @@ public class MediaService extends IntentService {
         if (Log.isLoggable(TAG, Log.INFO)) {
             Log.i(TAG, "Begin " + intent);
         }
+        Log.d(TAG,"onHandleIntent -> intent: "+intent);
         try {
             switch (intent.getAction()) {
                 case Intent.ACTION_LOCALE_CHANGED: {
@@ -121,6 +124,7 @@ public class MediaService extends IntentService {
     }
 
     public static void onScanVolume(Context context, Uri uri) throws IOException {
+        Log.d(TAG,"onScanVolume -> uri: "+uri);
         final File file = new File(uri.getPath()).getCanonicalFile();
         final String volumeName = MediaStore.getVolumeName(file);
 
@@ -132,6 +136,7 @@ public class MediaService extends IntentService {
             ensureDefaultRingtones(context);
         }
 
+        MediaServiceAssist.ensureDefaultRingtones(context);
         try (ContentProviderClient cpc = context.getContentResolver()
                 .acquireContentProviderClient(MediaStore.AUTHORITY)) {
             ((MediaProvider) cpc.getLocalContentProvider()).attachVolume(volumeName);
@@ -147,6 +152,7 @@ public class MediaService extends IntentService {
             }
 
             for (File dir : resolveDirectories(volumeName)) {
+                Log.d(TAG,"onScanVolume -> scanDirectory: "+dir.getPath());
                 MediaScanner.instance(context).scanDirectory(dir);
             }
 
@@ -161,6 +167,7 @@ public class MediaService extends IntentService {
 
     public static Uri onScanFile(Context context, Uri uri) throws IOException {
         final File file = new File(uri.getPath()).getCanonicalFile();
+        Log.d(TAG,"onScanFile -> file: "+file.getPath());
         return MediaScanner.instance(context).scanFile(file);
     }
 
@@ -175,6 +182,7 @@ public class MediaService extends IntentService {
     private static void ensureDefaultRingtones(Context context) {
         for (int type : new int[] {
                 TYPE_RINGTONE,
+                TYPE_RINGTONE1,
                 TYPE_NOTIFICATION,
                 TYPE_ALARM,
         }) {
@@ -205,6 +213,7 @@ public class MediaService extends IntentService {
     private static String getDefaultRingtoneSetting(int type) {
         switch (type) {
             case TYPE_RINGTONE: return "ringtone_set";
+            case TYPE_RINGTONE1: return "ringtone1_set";
             case TYPE_NOTIFICATION: return "notification_sound_set";
             case TYPE_ALARM: return "alarm_alert_set";
             default: throw new IllegalArgumentException();
@@ -214,6 +223,7 @@ public class MediaService extends IntentService {
     private static String getDefaultRingtoneFilename(int type) {
         switch (type) {
             case TYPE_RINGTONE: return SystemProperties.get("ro.config.ringtone");
+            case TYPE_RINGTONE1: return SystemProperties.get("ro.config.ringtone1");
             case TYPE_NOTIFICATION: return SystemProperties.get("ro.config.notification_sound");
             case TYPE_ALARM: return SystemProperties.get("ro.config.alarm_alert");
             default: throw new IllegalArgumentException();

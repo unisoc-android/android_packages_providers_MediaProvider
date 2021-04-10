@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"ડિલીટ કરો"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"કસ્ટમ રિંગટોન ઉમેરવામાં અસમર્થ"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"કસ્ટમ રિંગટોન કાઢી નાખવામાં અસમર્થ"</string>
+    <string name="unable_to_add_ringtone_unique_error">"સમાન નામ સાથે કસ્ટમ રીંગટોનને ઉમેરવી અક્ષમ છે"</string>
 </resources>

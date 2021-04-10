@@ -22,9 +22,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.database.StaleDataException;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -54,6 +56,7 @@ import com.android.internal.app.AlertController;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import com.unisoc.providers.media.RingtonePickerActivityAssist;
 
 /**
  * The {@link RingtonePickerActivity} allows the user to choose one from all of the
@@ -79,6 +82,8 @@ public final class RingtonePickerActivity extends AlertActivity implements
 
     private static final int ADD_FILE_REQUEST_CODE = 300;
 
+    // unisoc bug 1147836: added for ensuring sounds respect the rules of audio focus
+    private AudioManager mAudioManager;
     private RingtoneManager mRingtoneManager;
     private int mType;
 
@@ -144,6 +149,8 @@ public final class RingtonePickerActivity extends AlertActivity implements
      */
     private static Ringtone sPlayingRingtone;
 
+    private RingtonePickerActivityAssist mAssist;
+
     private DialogInterface.OnClickListener mRingtoneClickListener =
             new DialogInterface.OnClickListener() {
 
@@ -186,7 +193,9 @@ public final class RingtonePickerActivity extends AlertActivity implements
         Intent intent = getIntent();
         mPickerUserId = UserHandle.myUserId();
         mTargetContext = this;
-
+        // unisoc bug 1147836: added for ensuring sounds respect the rules of audio focus
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAssist = new RingtonePickerActivityAssist(this);
         // Get the types of ringtones to show
         mType = intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, -1);
         initRingtoneManager();
@@ -277,7 +286,9 @@ public final class RingtonePickerActivity extends AlertActivity implements
                 @Override
                 protected Uri doInBackground(Uri... params) {
                     try {
-                        return mRingtoneManager.addCustomExternalRingtone(params[0], mType);
+                        if (!mAssist.isAudioIrregular(params[0], mType)) {
+                            return mRingtoneManager.addCustomExternalRingtone(params[0], mType);
+                        }
                     } catch (IOException | IllegalArgumentException e) {
                         Log.e(TAG, "Unable to add new ringtone", e);
                     }
@@ -290,13 +301,21 @@ public final class RingtonePickerActivity extends AlertActivity implements
                         requeryForAdapter();
                     } else {
                         // Ringtone was not added, display error Toast
-                        Toast.makeText(RingtonePickerActivity.this, R.string.unable_to_add_ringtone,
-                                Toast.LENGTH_SHORT).show();
+                        if (mAssist.isPresent()) {
+                            Toast.makeText(RingtonePickerActivity.this, R.string.unable_to_add_ringtone_unique_error,
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(RingtonePickerActivity.this, R.string.unable_to_add_ringtone,
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             };
             installTask.execute(data.getData());
         }
+        // unisoc bug 1126034: added for adding the relevant logic to display which ringtone is
+        // selected whatever has been done after choosing Add ringtone
+        setupAlert();
     }
 
     // Disabled because context menus aren't Material Design :(
@@ -390,6 +409,7 @@ public final class RingtonePickerActivity extends AlertActivity implements
      * This should only need to happen after adding or removing a ringtone.
      */
     private void requeryForAdapter() {
+        Uri previouslySelectedRingtoneUri = getCurrentlySelectedRingtoneUri();
         // Refresh and set a new cursor, closing the old one.
         initRingtoneManager();
         mAdapter.changeCursor(mCursor);
@@ -397,12 +417,19 @@ public final class RingtonePickerActivity extends AlertActivity implements
         // Update checked item location.
         int checkedPosition = POS_UNKNOWN;
         for (int i = 0; i < mAdapter.getCount(); i++) {
-            if (mAdapter.getItemId(i) == mCheckedItemId) {
+            if (mAdapter.getItemId(i) == mCheckedItemId
+                    && mRingtoneManager.getRingtoneUri(i).equals(previouslySelectedRingtoneUri)) {
                 checkedPosition = getListPosition(i);
                 break;
             }
         }
-        if (mHasSilentItem && checkedPosition == POS_UNKNOWN) {
+        // unisoc bug 1124130: added and modified for fixing notification ringtones logic to
+        // display which ringtone is selected whatever has been done after choosing Add
+        // ringtone for a certain app
+        if (mHasDefaultItem && checkedPosition == POS_UNKNOWN && getCheckedItem() == mDefaultRingtonePos) {
+            checkedPosition = mDefaultRingtonePos;
+        }
+        if (mHasSilentItem && checkedPosition == POS_UNKNOWN && getCheckedItem() == mSilentPos) {
             checkedPosition = mSilentPos;
         }
         setCheckedItem(checkedPosition);
@@ -526,9 +553,33 @@ public final class RingtonePickerActivity extends AlertActivity implements
         mHandler.postDelayed(this, delayMs);
     }
 
+    /* unisoc bug 1147836: added for ensuring sounds respect the rules of audio focus @{*/
+    private AudioManager.OnAudioFocusChangeListener mAudioFocusListener = new AudioManager.OnAudioFocusChangeListener() {
+
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            Log.d(TAG, "focusChange=" + focusChange);
+            switch(focusChange) {
+                case AudioManager.AUDIOFOCUS_LOSS:
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    stopAnyPlayingRingtone();
+                    break;
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    break;
+            }
+        }
+    };
+    /* @ }*/
+
     public void run() {
         stopAnyPlayingRingtone();
         if (mSampleRingtonePos == mSilentPos) {
+            /* unisoc bug 1173643: added for releasing audio focues when ringtone is none @{*/
+            if (mAudioManager != null) {
+                mAudioManager.abandonAudioFocus(mAudioFocusListener);
+            }
+            /* @ }*/
             return;
         }
 
@@ -547,7 +598,12 @@ public final class RingtonePickerActivity extends AlertActivity implements
             ringtone = mDefaultRingtone;
             mCurrentRingtone = null;
         } else {
-            ringtone = mRingtoneManager.getRingtone(getRingtoneManagerPosition(mSampleRingtonePos));
+            try {
+                ringtone = mRingtoneManager.getRingtone(getRingtoneManagerPosition(mSampleRingtonePos));
+            } catch (StaleDataException | IllegalStateException e) {
+                Log.d(TAG, "A " + e.getClass().getSimpleName() + " was caught");
+                return;
+            }
             mCurrentRingtone = ringtone;
         }
 
@@ -558,7 +614,16 @@ public final class RingtonePickerActivity extends AlertActivity implements
                                 .setFlags(mAttributesFlags)
                                 .build());
             }
-            ringtone.play();
+            /* unisoc bug 1147836: modified for ensuring sounds respect the rules of audio focus @{*/
+            int result = 0;
+            if (mAudioManager != null) {
+                result = mAudioManager.requestAudioFocus(mAudioFocusListener,
+                        mRingtoneManager.inferStreamType(), AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+            }
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                ringtone.play();
+            }
+            /* @ }*/
         }
     }
 
@@ -571,6 +636,12 @@ public final class RingtonePickerActivity extends AlertActivity implements
         } else {
             saveAnyPlayingRingtone();
         }
+
+        /* unisoc bug 1147836: added for ensuring sounds respect the rules of audio focus @{*/
+        if (mAudioManager != null) {
+            mAudioManager.abandonAudioFocus(mAudioFocusListener);
+        }
+        /* @ }*/
     }
 
     @Override

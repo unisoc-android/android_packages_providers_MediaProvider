@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"मिटाएं"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"आपके मुताबिक रिंगटोन नहीं जोड़ी जा सकी"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"आपके मुताबिक रिंगटोन नहीं हटाई जा सकी"</string>
+    <string name="unable_to_add_ringtone_unique_error">"उसी नाम से अनुकूलित रिंगटोन जोड़ने में असमर्थ"</string>
 </resources>

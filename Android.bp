@@ -3,6 +3,7 @@ android_app {
 
     manifest: "AndroidManifest.xml",
 
+
     resource_dirs: [
         "res",
     ],
@@ -10,6 +11,7 @@ android_app {
     srcs: [
         "src/**/*.aidl",
         "src/**/*.java",
+        ":unisoc_mediaprovider",
     ],
 
     optimize: {

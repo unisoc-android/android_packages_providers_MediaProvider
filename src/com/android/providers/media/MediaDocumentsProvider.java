@@ -1179,13 +1179,17 @@ public class MediaDocumentsProvider extends DocumentsProvider {
     private interface SongQuery {
         final String[] PROJECTION = new String[] {
                 AudioColumns._ID,
-                AudioColumns.TITLE,
+                // unisoc bug 1153577: modified for being consistent with ImageQuery and VideoQuery
+                // AudioColumns.TITLE,
+                AudioColumns.DISPLAY_NAME,
                 AudioColumns.MIME_TYPE,
                 AudioColumns.SIZE,
                 AudioColumns.DATE_MODIFIED };
 
         final int _ID = 0;
-        final int TITLE = 1;
+        // unisoc bug 1153577: modified for being consistent with ImageQuery and VideoQuery
+        // final int TITLE = 1;
+        final int DISPLAY_NAME = 1;
         final int MIME_TYPE = 2;
         final int SIZE = 3;
         final int DATE_MODIFIED = 4;
@@ -1197,7 +1201,9 @@ public class MediaDocumentsProvider extends DocumentsProvider {
 
         final RowBuilder row = result.newRow();
         row.add(Document.COLUMN_DOCUMENT_ID, docId);
-        row.add(Document.COLUMN_DISPLAY_NAME, cursor.getString(SongQuery.TITLE));
+        // unisoc bug 1153577: modified for being consistent with ImageQuery and VideoQuery
+        // row.add(Document.COLUMN_DISPLAY_NAME, cursor.getString(SongQuery.TITLE));
+        row.add(Document.COLUMN_DISPLAY_NAME, cursor.getString(SongQuery.DISPLAY_NAME));
         row.add(Document.COLUMN_SIZE, cursor.getLong(SongQuery.SIZE));
         row.add(Document.COLUMN_MIME_TYPE, cursor.getString(SongQuery.MIME_TYPE));
         row.add(Document.COLUMN_LAST_MODIFIED,

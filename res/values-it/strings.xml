@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"Elimina"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"Impossibile aggiungere suoneria personalizzata"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"Impossibile eliminare suoneria personalizzata"</string>
+    <string name="unable_to_add_ringtone_unique_error">Impossibile aggiungere suoneria personalizzata con lo stesso nome</string>
 </resources>

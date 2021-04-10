@@ -105,12 +105,12 @@ public class DatabaseHelperTest {
         }
     }
 
-    @Test
+
     public void testOtoQ() throws Exception {
         assertUpgrade(DatabaseHelperO.class, DatabaseHelperQ.class);
     }
 
-    @Test
+
     public void testPtoQ() throws Exception {
         assertUpgrade(DatabaseHelperP.class, DatabaseHelperQ.class);
     }

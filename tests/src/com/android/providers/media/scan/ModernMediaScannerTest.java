@@ -86,7 +86,7 @@ public class ModernMediaScannerTest {
 
     @After
     public void tearDown() {
-        FileUtils.deleteContents(mDir);
+        FileUtils.deleteContentsAndDir(mDir);
     }
 
     @Test

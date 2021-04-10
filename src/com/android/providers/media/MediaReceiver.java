@@ -21,11 +21,14 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 public class MediaReceiver extends BroadcastReceiver {
+    private static final String TAG = "MediaReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
+        Log.d(TAG,"onReceive -> action: "+action);
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             // Register our idle maintenance service
             IdleService.scheduleIdlePass(context);

@@ -6,6 +6,7 @@ android_test {
 
     srcs: [
         "src/**/*.java",
+        ":unisoc_test_mediaprovider",
     ],
 
     libs: [

@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"حذف کریں"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"حسب ضرورت رنگ ٹون شامل کرنے سے قاصر ہے"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"حسب ضرورت رنگ ٹون حذف کرنے سے قاصر ہے"</string>
+    <string name="unable_to_add_ringtone_unique_error">"ایک ہی نام کی من چاہی رنگ ٹون شامل کرنے میں ناکام"</string>
 </resources>

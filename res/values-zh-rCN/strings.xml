@@ -48,4 +48,6 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"删除"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"无法添加自定义铃声"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"无法删除自定义铃声"</string>
+    <!-- unisoc added -->
+    <string name="unable_to_add_ringtone_unique_error">"无法添加相同名称的铃声"</string>
 </resources>

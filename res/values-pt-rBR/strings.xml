@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"Excluir"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"Não foi possível adicionar o toque personalizado"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"Não foi possível excluir o toque personalizado"</string>
+    <string name="unable_to_add_ringtone_unique_error">"Não é possível adicionar toque com o mesmo nome"</string>
 </resources>

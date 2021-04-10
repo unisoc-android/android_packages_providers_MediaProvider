@@ -154,5 +154,6 @@
     <add-resource type="string" name="sound_name_ringtone_13" />
     <add-resource type="string" name="sound_name_ringtone_14" />
     <add-resource type="string" name="sound_name_ringtone_15" />
-
+    <!-- unisoc added -->
+    <string name="unable_to_add_ringtone_unique_error">Unable to add custom ringtone with the same name</string>
 </resources>

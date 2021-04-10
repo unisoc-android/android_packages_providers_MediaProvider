@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"Eliminar"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"Non se pode engadir un ton de chamada personalizado"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"Non se pode eliminar un ton de chamada personalizado"</string>
+    <string name="unable_to_add_ringtone_unique_error">Non se puido engadir un ton de chamada co mesmo nome</string>
 </resources>

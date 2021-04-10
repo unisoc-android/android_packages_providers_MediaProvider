@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"Ezabatu"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"Ezin da gehitu tonu pertsonalizatua"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"Ezin da ezabatu tonu pertsonalizatua"</string>
+    <string name="unable_to_add_ringtone_unique_error">Ezin da izen bereko dei-tonu pertsonalizaturik gehitu</string>
 </resources>

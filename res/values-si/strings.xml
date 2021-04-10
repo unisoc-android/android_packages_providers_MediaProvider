@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"මකන්න"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"අභිරුචි නාද රිද්මය එක් කළ නොහැකිය"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"අභිරුචි නාද රිද්මය මැකිය නොහැකිය"</string>
+    <string name="unable_to_add_ringtone_unique_error">"භාවිතාවන නාද රිද්ම එම නමින්ම එකතු කිරීමට නොහැකියි"</string>
 </resources>

@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"Poista"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"Muokatun soittoäänen lisääminen epäonnistui."</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"Muokatun soittoäänen poistaminen epäonnistui."</string>
+    <string name="unable_to_add_ringtone_unique_error">"Mukautettua soittoääntä ei voi lisätä samalla nimellä"</string>
 </resources>

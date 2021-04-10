@@ -48,4 +48,5 @@
     <string name="delete_ringtone_text" msgid="2963662097583300181">"মুছুন"</string>
     <string name="unable_to_add_ringtone" msgid="6256097521165711269">"কাস্টম রিংটোন যোগ করা গেল না"</string>
     <string name="unable_to_delete_ringtone" msgid="2258180073859253495">"কাস্টম রিংটোন মোছা গেল না"</string>
+    <string name="unable_to_add_ringtone_unique_error">"একই নামের সাথে পছন্দের রিংটোন যুক্ত করতে অক্ষম"</string>
 </resources>
